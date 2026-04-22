@@ -1,5 +1,7 @@
 #pragma once
 #include <sqlite3.h>
+#include <vector>
+#include <sstream>
 
 
 namespace categorie{
@@ -8,4 +10,5 @@ namespace categorie{
     void visualizzaCategorie(sqlite3* db);
     int creaCategoria(sqlite3* db, std::string new_name);
     int rinominaCategoria(sqlite3* db);
+    std::vector<std::string> stringToVector(const std::string& testo);
 }

@@ -4,6 +4,7 @@
 #include <sqlite3.h>
 #include <algorithm>
 #include <sstream>
+#include <vector>
 
 
 namespace categorie{
@@ -145,22 +146,19 @@ namespace categorie{
         // metto tutto in lowercase
         std::transform(tmp_old_name.begin(), tmp_old_name.end(), tmp_old_name.begin(), ::tolower);
         std::transform(DBlist.begin(), DBlist.end(), DBlist.begin(), ::tolower);
-        
-        bool trovato = false;
-        std::stringstream slist(DBlist);
-        std::string riga;
-        while (std::getline(slist, riga)) {
-            // togliamo eventuali spazi di troppo
-            riga.erase(riga.find_last_not_of(" \n\r\t") + 1);
+        //Trasformo stringa con \n in lista
+        std::vector<std::string> nomi_in_db = stringToVector(DBlist);
 
-            if (riga == tmp_old_name) {
+        bool trovato = false;
+
+        for (int i=0; i<nomi_in_db.size(); ++i){
+            //std::cout << i <<" confronto "<< tmp_old_name << " con " << nomi_in_db[i] << ' ';
+            if (tmp_old_name == nomi_in_db[i]){
                 trovato = true;
                 break;
             }
         }
-        slist.clear();              // reset flag (EOF, errori)
-        slist.seekg(0);             // torna all'inizio
-
+        
         if (!trovato){
             //in caso di errore nella selezione, mostra tutte le categorie e riavvia il processo
             std::cout << "Categoria " << old_name << " non trovata " << std::endl << "seleziona una tra le seguenti categorie" << std::endl;
@@ -183,16 +181,10 @@ namespace categorie{
             }else
             {   
                 //verifica che il nome non sia uguale ad uno già nel db
-                bool t = false;
                 //stesso processo di old_name, questa volta con new_name
-                std::stringstream sl(DBlist);
-                std::string r;
-                std::cout << "confronto: " << tmp_new_name << DBlist << std::endl;
-                while (std::getline(sl, r)) {
-                    // togliamo eventuali spazi di troppo
-                    riga.erase(r.find_last_not_of(" \n\r\t") + 1);
-                    std::cout << "confronto: " << tmp_new_name << r << std::endl;
-                    if (r == tmp_new_name) {
+                bool t = false;
+                for (int i=0; i<nomi_in_db.size(); ++i){
+                    if (tmp_new_name == nomi_in_db[i]){
                         t = true;
                         break;
                     }
@@ -203,6 +195,7 @@ namespace categorie{
                 }
             }
 
+            
             //cambia il nome nella colonna (senza nessun problema, le altre si riferiscono all'id)
             int resp = db_u::rinominaCategoria(db, old_name, new_name);
             //verifica sia tutto ok;
@@ -215,6 +208,24 @@ namespace categorie{
                 return 1;
             }
         }
+    }
+
+    std::vector<std::string> stringToVector(const std::string& testo) {
+        std::vector<std::string> risultato;
+        std::stringstream ss(testo);
+        std::string riga;
+
+        while (std::getline(ss, riga)) {
+            // rimuovi spazi finali (tipo "Franco ")
+            riga.erase(riga.find_last_not_of(" \n\r\t") + 1);
+
+            // evita righe vuote
+            if (!riga.empty()) {
+                risultato.push_back(riga);
+            }
+        }
+
+        return risultato;
     }
 }
 
