@@ -208,18 +208,24 @@ namespace db_u {
             return 1;
         }
 
+        std::cout << query << std::endl;
         
+        //old_name = "\""+ old_name + "\"";
+        //new_name = "\""+ new_name + "\"";
 
+        std::cout << new_name << std::endl;
+        std::cout << old_name << std::endl;
+        
         sqlite3_stmt* stmt;
         stmt = prepare(db, query.c_str());
         
         bind_txt(stmt, 1, new_name.c_str());
         bind_txt(stmt, 2, old_name.c_str());
-        int rc = sqlite3_step(stmt);
+        int rc = step(stmt);
         finalize(stmt);
+        std::string errStr = sqlite3_errmsg(db);
 
-        if (rc!=SQLITE_DONE){
-            std::string errStr = sqlite3_errmsg(db);
+        if (rc!=SQLITE_DONE && errStr != "not an error"){
             std::cerr << "Errore nell'inserimento. Messaggio errore: " << errStr << std::endl;
             return 1;
         }else{

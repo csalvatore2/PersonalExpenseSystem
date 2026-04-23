@@ -59,7 +59,7 @@ namespace categorie{
                     std::cout << "Inserisci il nome della categoria che desideri aggiungere: " << std::endl;
                     std::string new_name;
                     std::getline(std::cin, new_name);
-                    new_name = spacetounderscore(new_name);
+                    //new_name = spacetounderscore(new_name);
                     //Valida stringa
                     if (new_name.length() < 3){
                         std::cout << "Inserisci un nome con almeno tre lettere." << std::endl;
@@ -72,7 +72,7 @@ namespace categorie{
                     
                     //messaggio di conferma
                     if (result == 0){
-                        std::cout << "Hai aggiunto " << underscoretospace(new_name) << std::endl;
+                        std::cout << "Hai aggiunto " << new_name << std::endl;
                     }
 
                     stall();
@@ -117,7 +117,7 @@ namespace categorie{
 
         //Stampale
         if (resp != "0"){
-            resp = underscoretospace(resp);
+            //resp = underscoretospace(resp);
             std::cout << resp << std::endl;
         }else{
             std::cout << "errore nella lettura delle categorie" << std::endl;
@@ -140,7 +140,7 @@ namespace categorie{
         std::cout << "Inserisci il nome della categoria che desideri rinominare: " << std::endl;
         std::string old_name;
         std::getline(std::cin, old_name);
-        old_name = spacetounderscore(old_name);
+        //old_name = spacetounderscore(old_name);
 
         // Verifica la presenza del nome nel db
         // ottiene tutte le categorie
@@ -148,8 +148,8 @@ namespace categorie{
         std::string tmp_old_name = old_name;
         // confronta la stringa di risposta con il nome inserito
         // metto tutto in lowercase
-        std::transform(tmp_old_name.begin(), tmp_old_name.end(), tmp_old_name.begin(), ::tolower);
-        std::transform(DBlist.begin(), DBlist.end(), DBlist.begin(), ::tolower);
+        ////std::transform(tmp_old_name.begin(), tmp_old_name.end(), tmp_old_name.begin(), ::tolower);
+        ////std::transform(DBlist.begin(), DBlist.end(), DBlist.begin(), ::tolower);
         //Trasformo stringa con \n in lista
         std::vector<std::string> nomi_in_db = stringToVector(DBlist);
 
@@ -175,17 +175,16 @@ namespace categorie{
             std::string new_name;
             std::getline(std::cin, new_name);
 
-            new_name = spacetounderscore(new_name);
+            //new_name = spacetounderscore(new_name);
 
             //verifica che il nome non sia uguale al precedente o ad uno già nel db
             std::string tmp_new_name = new_name;
-            std::transform(tmp_new_name.begin(), tmp_new_name.end(), tmp_new_name.begin(), ::tolower);
+            ////std::transform(tmp_new_name.begin(), tmp_new_name.end(), tmp_new_name.begin(), ::tolower);
             //verifica che il nome non sia uguale al precedente
             if (tmp_new_name == tmp_old_name){
                 std::cout << "Attenzione: il nome della categoria è uguale al precedente" << std::endl;
                 return 1;
-            }else
-            {   
+            }else{   
                 //verifica che il nome non sia uguale ad uno già nel db
                 //stesso processo di old_name, questa volta con new_name
                 bool t = false;
@@ -234,7 +233,7 @@ namespace categorie{
         return risultato;
     }
 
-    std::string spacetounderscore(std::string s){
+    /* std::string spacetounderscore(std::string s){
         //funzione per gestire meglio le stringhe sin da subito
         //trim dell'inizo e della fine
         //inizio
@@ -256,7 +255,8 @@ namespace categorie{
     }
     bool notSpaceNoNewline(char c) {
         return !(c == ' ' || c == '\t' || c == '\r');
-    }
+    }*/
+   
 }
 
 
