@@ -116,10 +116,14 @@ namespace categorie{
         std::string resp = db_u::getCategorie(db);
 
         //Stampale
-        if (resp != "0"){
+        if (resp != "0" && resp != ""){
             //resp = underscoretospace(resp);
             std::cout << resp << std::endl;
-        }else{
+        }else if (resp == "" | resp == " "){
+            std::cout << "Attualmente non sono presenti categorie." << std::endl << std::endl;
+        }
+        
+        else{
             std::cout << "errore nella lettura delle categorie" << std::endl;
         }
     }
