@@ -27,3 +27,6 @@ CREATE TABLE Budget(
 
 -- CREA_CATEGORIA
 INSERT INTO Categorie (Nome) VALUES (?);
+
+-- RINOMINA_CATEGORIA
+UPDATE Categorie SET Nome = (?) WHERE Nome = (?);

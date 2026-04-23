@@ -201,12 +201,30 @@ namespace db_u {
         return 0;
     }
 
-    int cercaCategoria(sqlite3* db, std::string name){
-        return 1;
-    }
-
     int rinominaCategoria(sqlite3* db, std::string old_name, std::string new_name){
+        std::string query = getQuery("RINOMINA_CATEGORIA");
+        if (query == "error"){
+            std::cout << "errore nel fetch da f.sql." << std::endl;
+            return 1;
+        }
 
-        return 0;
+        
+
+        sqlite3_stmt* stmt;
+        stmt = prepare(db, query.c_str());
+        
+        bind_txt(stmt, 1, new_name.c_str());
+        bind_txt(stmt, 2, old_name.c_str());
+        int rc = sqlite3_step(stmt);
+        finalize(stmt);
+
+        if (rc!=SQLITE_DONE){
+            std::string errStr = sqlite3_errmsg(db);
+            std::cerr << "Errore nell'inserimento. Messaggio errore: " << errStr << std::endl;
+            return 1;
+        }else{
+            return 0;
+        }
+
     }
 }

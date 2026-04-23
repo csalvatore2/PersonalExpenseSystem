@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <sstream>
 #include <vector>
+#include <cctype>
+
 
 
 namespace categorie{
@@ -57,6 +59,7 @@ namespace categorie{
                     std::cout << "Inserisci il nome della categoria che desideri aggiungere: " << std::endl;
                     std::string new_name;
                     std::getline(std::cin, new_name);
+                    new_name = spacetounderscore(new_name);
                     //Valida stringa
                     if (new_name.length() < 3){
                         std::cout << "Inserisci un nome con almeno tre lettere." << std::endl;
@@ -69,7 +72,7 @@ namespace categorie{
                     
                     //messaggio di conferma
                     if (result == 0){
-                        std::cout << "Hai aggiunto " << new_name << std::endl;
+                        std::cout << "Hai aggiunto " << underscoretospace(new_name) << std::endl;
                     }
 
                     stall();
@@ -114,6 +117,7 @@ namespace categorie{
 
         //Stampale
         if (resp != "0"){
+            resp = underscoretospace(resp);
             std::cout << resp << std::endl;
         }else{
             std::cout << "errore nella lettura delle categorie" << std::endl;
@@ -132,11 +136,11 @@ namespace categorie{
     }
 
     int rinominaCategoria(sqlite3* db){
-        //TODO PROBLEMI CON PAROLE DOPPIE
         //seleziona categoria
         std::cout << "Inserisci il nome della categoria che desideri rinominare: " << std::endl;
         std::string old_name;
         std::getline(std::cin, old_name);
+        old_name = spacetounderscore(old_name);
 
         // Verifica la presenza del nome nel db
         // ottiene tutte le categorie
@@ -171,6 +175,8 @@ namespace categorie{
             std::string new_name;
             std::getline(std::cin, new_name);
 
+            new_name = spacetounderscore(new_name);
+
             //verifica che il nome non sia uguale al precedente o ad uno già nel db
             std::string tmp_new_name = new_name;
             std::transform(tmp_new_name.begin(), tmp_new_name.end(), tmp_new_name.begin(), ::tolower);
@@ -195,7 +201,7 @@ namespace categorie{
                 }
             }
 
-            
+
             //cambia il nome nella colonna (senza nessun problema, le altre si riferiscono all'id)
             int resp = db_u::rinominaCategoria(db, old_name, new_name);
             //verifica sia tutto ok;
@@ -226,6 +232,30 @@ namespace categorie{
         }
 
         return risultato;
+    }
+
+    std::string spacetounderscore(std::string s){
+        //funzione per gestire meglio le stringhe sin da subito
+        //trim dell'inizo e della fine
+        //inizio
+        s.erase(s.begin(), std::find_if(s.begin(), s.end(), notSpaceNoNewline));
+        //fine
+        s.erase(std::find_if(s.rbegin(), s.rend(), notSpaceNoNewline).base(), s.end());
+
+        //spazi interni da " " a "_"
+        std::replace(s.begin(), s.end(), ' ', '_');
+
+        return s;
+    }
+    std::string underscoretospace(std::string s){
+        //funzione per visualizzare correttamente le stringhe
+        //spazi interni da " " a "_"
+        std::replace(s.begin(), s.end(), '_', ' ');
+
+        return s;
+    }
+    bool notSpaceNoNewline(char c) {
+        return !(c == ' ' || c == '\t' || c == '\r');
     }
 }
 

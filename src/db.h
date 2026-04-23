@@ -17,6 +17,5 @@ namespace db_u{
     std::string getCategorie(sqlite3* db);
     int creaCategoria(sqlite3* db, std::string new_name);
     int rinominaCategoria(sqlite3* db, std::string old_name, std::string new_name);
-    int cercaCategoria(sqlite3* db, std::string name);
 }
 
