@@ -1,8 +1,8 @@
+#pragma once
 #include <iostream>
+#include <sqlite3.h>
+#include "util.h"
 
 namespace transazioni {
-    void open() {
-        std::cout << "Transazioni" << std::endl;
-    }
-
+    void open(sqlite3* db);
 }

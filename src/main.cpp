@@ -6,6 +6,7 @@
 #include "report.h"
 #include "budget.h"
 #include "db.h"
+#include "util.h"
 
 using namespace std;
 
@@ -27,12 +28,12 @@ int main() {
 
         //Messaggio di benvenuto
     cout << "----------------------------------"<< endl;
+    cout << "----------------------------------"<< endl;
     cout << "------------Welcome!--------------"<< endl;
-    cout << "-------Press enter to start-------"<< endl;
+    cout << "----------------------------------"<< endl;
     cout << "----------------------------------"<< endl;
     cout << "                                  " << endl;
-    string tmp;
-    getline(cin, tmp);
+    util::stall();
     
     int sel = 0;
 
@@ -50,8 +51,10 @@ int main() {
         cout << "                                  " << endl;
         cout << "Inserisci la tua selezione: ";
 
-
-        cin >> sel;
+        //error hand
+        sel = util::inInt();
+        //puliamo il buffer perchè all'interno delle funzioni utilizzo std::getline;
+        //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (sel)
         {
@@ -59,7 +62,7 @@ int main() {
             categorie::open(db);
             break;
         case 2:
-            transazioni::open();
+            transazioni::open(db);
             break;
         case 3:
             budget::open();

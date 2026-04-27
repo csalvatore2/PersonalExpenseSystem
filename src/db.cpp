@@ -5,10 +5,11 @@
 #include <sstream>
 #include <string>
 
+
 namespace db_u {
     //FUNZIONI GENERALI
     void init(sqlite3* db){
-        std::cout<<"init"<<std::endl;
+        //std::cout<<"init"<<std::endl;
         //se è vuoto creiamo le tabelle
         if (!checkTabelle(db)){
             creaTabelle(db);
@@ -36,6 +37,12 @@ namespace db_u {
     void bind_txt(sqlite3_stmt* stmt, int index, const char* nomeTabella){
         sqlite3_bind_text(stmt, index, nomeTabella, -1, SQLITE_TRANSIENT);
     }
+
+    void bind_double(sqlite3_stmt* stmt, int index, double value){
+        sqlite3_bind_double(stmt, index, value);    
+    }        
+
+    
 
     //funzione per prendere la qery dal file.sql
     std::string getQuery(const std::string& tag){
@@ -208,13 +215,11 @@ namespace db_u {
             return 1;
         }
 
-        std::cout << query << std::endl;
-        
-        //old_name = "\""+ old_name + "\"";
-        //new_name = "\""+ new_name + "\"";
-
-        std::cout << new_name << std::endl;
-        std::cout << old_name << std::endl;
+        //std::cout << query << std::endl;
+        ////old_name = "\""+ old_name + "\"";
+        ////new_name = "\""+ new_name + "\"";
+        //std::cout << new_name << std::endl;
+        //std::cout << old_name << std::endl;
         
         sqlite3_stmt* stmt;
         stmt = prepare(db, query.c_str());
@@ -233,4 +238,88 @@ namespace db_u {
         }
 
     }
+
+    bool aggiungiTransazione(sqlite3* db, float importo, std::string data, std::string cat, std::string desc){
+        //prendiamo dal file .sql la query corretta
+        //Consideriamo 2 casi, uno con CURRENT DATE e l'altro normale
+        if(data == "CURRENT_DATE"){
+            std::string query = getQuery("ADD_TRANSAZIONE_CD");
+            //controlliamo non ci siano errori nella lettura dal file della query
+            if (query == "error"){
+                return 1;
+            }
+            //trasforma il nome della categoria in id
+            int id = getCatID(db, cat);
+    
+            sqlite3_stmt* stmt;
+            stmt = prepare(db, query.c_str());
+            bind_double(stmt, 1, importo);
+            bind_int(stmt, 2, id);
+            bind_txt(stmt, 3, desc.c_str());
+            int rc = sqlite3_step(stmt);
+            finalize(stmt);
+            //verifichiamo sia andato 
+            if (rc!=SQLITE_DONE){
+                std::string errStr = sqlite3_errmsg(db);
+                std::cerr << "Errore nell'inserimento della transazione" << std::endl;
+                return 1;
+            }
+            return 0;
+        }else{
+            std::string query = getQuery("ADD_TRANSAZIONE");
+            //controlliamo non ci siano errori nella lettura dal file della query
+            if (query == "error"){
+                return 1;
+            }
+    
+            //trasforma il nome della categoria in id
+            int id = getCatID(db, cat);
+    
+            sqlite3_stmt* stmt;
+            stmt = prepare(db, query.c_str());
+            
+            bind_double(stmt, 1, importo);
+            bind_txt(stmt, 2, data.c_str());
+            bind_int(stmt, 3, id);
+            bind_txt(stmt, 4, desc.c_str());
+            int rc = sqlite3_step(stmt);
+            finalize(stmt);
+    
+            //verifichiamo sia andato 
+            if (rc!=SQLITE_DONE){
+                std::string errStr = sqlite3_errmsg(db);
+                std::cerr << "Errore nell'inserimento della transazione" << std::endl;
+                return 1;
+            }
+    
+            return 0;
+        }
+    }
+
+    int getCatID(sqlite3* db, std::string cat){
+        int id = -1;
+        //ottendo la q dal file.sql
+        std::string query = getQuery("GET_ID_CATEGORIA");
+
+        if (query == "error"){
+            return 1;
+        }
+
+        sqlite3_stmt* stmt;
+        stmt = prepare(db, query.c_str());
+
+        bind_txt(stmt, 1, cat.c_str());
+        //mi aspetto solo una riga
+        int rc = sqlite3_step(stmt);
+
+        if (rc == SQLITE_ROW){
+            id = sqlite3_column_int(stmt, 0);
+        }
+
+        finalize(stmt);
+
+        return id;
+
+    }
+
 }

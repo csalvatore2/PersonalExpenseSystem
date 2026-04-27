@@ -1,13 +1,11 @@
 #include <iostream>
 #include "categorie.h"
 #include "db.h"
+#include "util.h"
 #include <sqlite3.h>
 #include <algorithm>
 #include <sstream>
 #include <vector>
-#include <cctype>
-
-
 
 namespace categorie{
     void open(sqlite3* db){
@@ -29,15 +27,10 @@ namespace categorie{
             
             //seleziona voce
             //verifica validità input
-            if (!(std::cin >> sel)) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Input non valido.\n";
-                continue;
-            }
+            sel = util::inInt();
             std::cout << "                                  " << std::endl;
             
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             
             switch(sel){
                 case 1:
@@ -47,7 +40,7 @@ namespace categorie{
                     std::cout << "----------------------------------" << std::endl;
 
                     visualizzaCategorie(db);
-                    stall();
+                    util::stall();
                     break;
                 case 2:
                 {
@@ -57,8 +50,7 @@ namespace categorie{
                     //Creare Nuova Categoria
                     //fai inserire nuovo nome
                     std::cout << "Inserisci il nome della categoria che desideri aggiungere: " << std::endl;
-                    std::string new_name;
-                    std::getline(std::cin, new_name);
+                    std::string new_name = util::inString();
                     //new_name = spacetounderscore(new_name);
                     //Valida stringa
                     if (new_name.length() < 3){
@@ -75,7 +67,7 @@ namespace categorie{
                         std::cout << "Hai aggiunto " << new_name << std::endl;
                     }
 
-                    stall();
+                    util::stall();
                     break;
                 }
                 case 3:
@@ -87,7 +79,7 @@ namespace categorie{
 
                     //astraiamo maggiormente per poter chiamare ricorsivamente la funzione 
                     rinominaCategoria(db);
-                    stall();
+                    util::stall();
                     break;
                 }
                 case 4:
@@ -103,15 +95,7 @@ namespace categorie{
         }while(sel != 4);  
     }
 
-    void stall(){
-        //aspettare che l'utente prema invio prima di riproporre il menu
-        std::cout << "Premi invio per continuare...";
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "                                  " << std::endl;
-        std::cout << "                                  " << std::endl;
-    }
-
-    void visualizzaCategorie (sqlite3* db) {
+    std::string visualizzaCategorie (sqlite3* db) {
         //leggi categorie da db
         std::string resp = db_u::getCategorie(db);
 
@@ -119,12 +103,13 @@ namespace categorie{
         if (resp != "0" && resp != ""){
             //resp = underscoretospace(resp);
             std::cout << resp << std::endl;
+            return resp;
         }else if (resp == "" | resp == " "){
             std::cout << "Attualmente non sono presenti categorie." << std::endl << std::endl;
-        }
-        
-        else{
+            return resp;
+        }else{
             std::cout << "errore nella lettura delle categorie" << std::endl;
+            return "";
         }
     }
 
@@ -142,8 +127,7 @@ namespace categorie{
     int rinominaCategoria(sqlite3* db){
         //seleziona categoria
         std::cout << "Inserisci il nome della categoria che desideri rinominare: " << std::endl;
-        std::string old_name;
-        std::getline(std::cin, old_name);
+        std::string old_name = util::inString();
         //old_name = spacetounderscore(old_name);
 
         // Verifica la presenza del nome nel db
@@ -155,29 +139,22 @@ namespace categorie{
         ////std::transform(tmp_old_name.begin(), tmp_old_name.end(), tmp_old_name.begin(), ::tolower);
         ////std::transform(DBlist.begin(), DBlist.end(), DBlist.begin(), ::tolower);
         //Trasformo stringa con \n in lista
-        std::vector<std::string> nomi_in_db = stringToVector(DBlist);
-
-        bool trovato = false;
-
-        for (int i=0; i<nomi_in_db.size(); ++i){
-            //std::cout << i <<" confronto "<< tmp_old_name << " con " << nomi_in_db[i] << ' ';
-            if (tmp_old_name == nomi_in_db[i]){
-                trovato = true;
-                break;
-            }
-        }
+        
+        bool trovato = cercaCategoria(DBlist, tmp_old_name);
         
         if (!trovato){
             //in caso di errore nella selezione, mostra tutte le categorie e riavvia il processo
-            std::cout << "Categoria " << old_name << " non trovata " << std::endl << "seleziona una tra le seguenti categorie" << std::endl;
-            visualizzaCategorie(db);
+            std::cout << "Categoria " << old_name << " non trovata " << std::endl << "seleziona una tra le seguenti categorie:" << std::endl;
+            std::string v = visualizzaCategorie(db);
+            if (v == ""){
+                return 1;
+            }
             rinominaCategoria(db);
             return 1;
         }else{
             //selezionare il nuovo nome da dare
             std::cout << "Inserisci il nuovo nome per la categoria " << old_name << ":" << std::endl;
-            std::string new_name;
-            std::getline(std::cin, new_name);
+            std::string new_name = util::inString();
 
             //new_name = spacetounderscore(new_name);
 
@@ -191,13 +168,7 @@ namespace categorie{
             }else{   
                 //verifica che il nome non sia uguale ad uno già nel db
                 //stesso processo di old_name, questa volta con new_name
-                bool t = false;
-                for (int i=0; i<nomi_in_db.size(); ++i){
-                    if (tmp_new_name == nomi_in_db[i]){
-                        t = true;
-                        break;
-                    }
-                }
+                bool t = cercaCategoria(DBlist, tmp_new_name);
                 if (t){
                     std::cout << "Attenzione: il nome della categoria è già presente" << std::endl;
                     return 1;
@@ -219,24 +190,17 @@ namespace categorie{
         }
     }
 
-    std::vector<std::string> stringToVector(const std::string& testo) {
-        std::vector<std::string> risultato;
-        std::stringstream ss(testo);
-        std::string riga;
-
-        while (std::getline(ss, riga)) {
-            // rimuovi spazi finali (tipo "Franco ")
-            riga.erase(riga.find_last_not_of(" \n\r\t") + 1);
-
-            // evita righe vuote
-            if (!riga.empty()) {
-                risultato.push_back(riga);
+    bool cercaCategoria(std::string DBlist, std::string nome){
+        std::vector<std::string> nomi_in_db = util::stringToVector(DBlist);
+        for (int i=0; i<nomi_in_db.size(); ++i){
+            //std::cout << i <<" confronto "<< tmp_old_name << " con " << nomi_in_db[i] << ' ';
+            if (nome == nomi_in_db[i]){
+                return true;
+                break;
             }
         }
-
-        return risultato;
+        return false;
     }
-
     /* std::string spacetounderscore(std::string s){
         //funzione per gestire meglio le stringhe sin da subito
         //trim dell'inizo e della fine

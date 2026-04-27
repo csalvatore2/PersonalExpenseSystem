@@ -30,3 +30,11 @@ INSERT INTO Categorie (Nome) VALUES (?);
 
 -- RINOMINA_CATEGORIA
 UPDATE Categorie SET Nome = (?) WHERE Nome = (?);
+
+-- ADD_TRANSAZIONE
+INSERT INTO Transazioni (Importo, Data, Categoria, Descrizione) VALUES (?, ?, ?, ?);
+-- ADD_TRANSAZIONE_CD
+INSERT INTO Transazioni (Importo, Data, Categoria, Descrizione) VALUES (?, CURRENT_DATE, ?, ?);
+
+-- GET_ID_CATEGORIA
+SELECT id FROM Categorie WHERE Nome = ?;
