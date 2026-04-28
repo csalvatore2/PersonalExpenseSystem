@@ -65,7 +65,7 @@ int main() {
             transazioni::open(db);
             break;
         case 3:
-            budget::open();
+            budget::open(db);
             break;
         case 4:
             report::open();

@@ -19,4 +19,5 @@ namespace db_u{
     int rinominaCategoria(sqlite3* db, std::string old_name, std::string new_name);
     bool aggiungiTransazione(sqlite3* db, double importo, std::string data, std::string cat, std::string desc);
     int getCatID(sqlite3* db, std::string cat);
+    bool creaBudget(sqlite3* db, int m, int y, std::string cat, double imp);
 }

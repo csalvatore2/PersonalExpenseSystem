@@ -1,8 +1,7 @@
 #include <iostream>
+#include <sqlite3.h>
 
 namespace budget{
-    void open(){
-        std::cout << "Gestione Budget" << std::endl;
-    }
+    void open(sqlite3* db);
 
 }

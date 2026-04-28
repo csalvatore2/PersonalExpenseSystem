@@ -303,7 +303,7 @@ namespace db_u {
         std::string query = getQuery("GET_ID_CATEGORIA");
 
         if (query == "error"){
-            return 1;
+            return id;
         }
 
         sqlite3_stmt* stmt;
@@ -320,6 +320,33 @@ namespace db_u {
         finalize(stmt);
 
         return id;
+
+    }
+
+    bool creaBudget(sqlite3* db, int m, int y, std::string cat, double imp){
+        std::string query = getQuery("ADD_BUDGET");
+
+        if (query == "error"){
+            return false;
+        }
+        //trasforma il nome della categoria in id
+        int id = getCatID(db, cat);
+
+        sqlite3_stmt* stmt;
+        stmt = prepare(db, query.c_str());
+
+        bind_int(stmt, 1, m);
+        bind_int(stmt, 2, y);
+        bind_int(stmt, 3, id);
+        bind_double(stmt, 4, imp);
+        int rc = sqlite3_step(stmt);
+        finalize(stmt);
+        if (rc!=SQLITE_DONE){
+            std::string errStr = sqlite3_errmsg(db);
+            std::cerr << "Errore nell'inserimento del budget." << std::endl;
+            return false;
+        }
+        return true;
 
     }
 
