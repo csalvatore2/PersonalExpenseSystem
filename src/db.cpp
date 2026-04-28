@@ -239,18 +239,19 @@ namespace db_u {
 
     }
 
-    bool aggiungiTransazione(sqlite3* db, float importo, std::string data, std::string cat, std::string desc){
+    bool aggiungiTransazione(sqlite3* db, double importo, std::string data, std::string cat, std::string desc){
         //prendiamo dal file .sql la query corretta
         //Consideriamo 2 casi, uno con CURRENT DATE e l'altro normale
         if(data == "CURRENT_DATE"){
             std::string query = getQuery("ADD_TRANSAZIONE_CD");
             //controlliamo non ci siano errori nella lettura dal file della query
             if (query == "error"){
-                return 1;
+                return false;
             }
             //trasforma il nome della categoria in id
             int id = getCatID(db, cat);
     
+            double t_importo = importo;
             sqlite3_stmt* stmt;
             stmt = prepare(db, query.c_str());
             bind_double(stmt, 1, importo);
@@ -262,14 +263,14 @@ namespace db_u {
             if (rc!=SQLITE_DONE){
                 std::string errStr = sqlite3_errmsg(db);
                 std::cerr << "Errore nell'inserimento della transazione" << std::endl;
-                return 1;
+                return false;
             }
-            return 0;
+            return true;
         }else{
             std::string query = getQuery("ADD_TRANSAZIONE");
             //controlliamo non ci siano errori nella lettura dal file della query
             if (query == "error"){
-                return 1;
+                return false;
             }
     
             //trasforma il nome della categoria in id
@@ -289,10 +290,10 @@ namespace db_u {
             if (rc!=SQLITE_DONE){
                 std::string errStr = sqlite3_errmsg(db);
                 std::cerr << "Errore nell'inserimento della transazione" << std::endl;
-                return 1;
+                return false;
             }
     
-            return 0;
+            return true;
         }
     }
 

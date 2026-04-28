@@ -15,7 +15,7 @@ namespace transazioni {
         std::cout << "----------------------------------" << std::endl << std::endl;
         
         //input dell'importo
-        float t_d = 0;
+        double t_d = 0;
         //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Inserire l'importo della spesa: " << std::endl;
         t_d = util::inDouble();
@@ -50,11 +50,7 @@ namespace transazioni {
         bool resp = db_u::aggiungiTransazione(db, t_d, t_data, t_cat, t_des);
         
         if (resp){
-            std::cout <<"Inseriti:    "<< std::endl;
-            std::cout <<"Importo:     "<< t_d << std::endl;
-            std::cout <<"Data:        "<< t_data << std::endl;
-            std::cout <<"Categoria:   "<< t_cat << std::endl;
-            std::cout <<"Descrizione: "<< t_des << std::endl;
+            std::cout <<"Spesa inserita correttamente"<< std::endl;
         }
     }
 
