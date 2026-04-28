@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <sqlite3.h>
+#include "util.h"
 
 namespace db_u{
     void init(sqlite3* db);
@@ -20,4 +21,5 @@ namespace db_u{
     bool aggiungiTransazione(sqlite3* db, double importo, std::string data, std::string cat, std::string desc);
     int getCatID(sqlite3* db, std::string cat);
     bool creaBudget(sqlite3* db, int m, int y, std::string cat, double imp);
+    std::vector<RigaSpesa> getSpesePerCategoria(sqlite3* db);
 }

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 
 namespace db_u {
@@ -350,4 +351,35 @@ namespace db_u {
 
     }
 
+    std::vector<RigaSpesa> getSpesePerCategoria(sqlite3* db){
+        std::string query = getQuery("SPESE_PER_CATEGORIA");
+
+        if (query == "error"){
+            std::cout << "Errore nella lettura della query." << std::endl;
+            return {};
+        }
+
+        //std::cout << "Query trovata con successo: " << std::endl;
+        
+        sqlite3_stmt* stmt;
+        stmt = prepare(db, query.c_str());
+        
+        //std::cout << "Query preparata con successo: " << std::endl;
+        std::vector<RigaSpesa> spese;
+        
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            //std::cout << "Riga n letta con successo: " << std::endl;
+            double spesa = sqlite3_column_double(stmt, 2);
+            int id = sqlite3_column_int(stmt, 0);
+            std::string nome = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            RigaSpesa r;
+            r.id = id;
+            r.nome = nome;
+            r.totale = spesa;
+            spese.push_back(r);
+        }
+
+        finalize(stmt);
+        return spese;
+    }
 }

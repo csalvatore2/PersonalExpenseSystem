@@ -68,7 +68,7 @@ int main() {
             budget::open(db);
             break;
         case 4:
-            report::open();
+            report::open(db);
             break;
         case 5:
             cout << "Exit" << endl;

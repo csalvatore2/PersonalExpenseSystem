@@ -2,6 +2,12 @@
 #include <string>
 #include <vector>
 
+struct RigaSpesa {
+    int id;
+    std::string nome;
+    float totale;
+};
+
 namespace util{
     constexpr bool VUOTO_OK = true;
 

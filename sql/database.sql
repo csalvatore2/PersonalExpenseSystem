@@ -38,3 +38,13 @@ INSERT INTO Transazioni (Importo, Data, Categoria, Descrizione) VALUES (?, CURRE
 
 -- GET_ID_CATEGORIA
 SELECT id FROM Categorie WHERE Nome = ?;
+
+-- SPESE_PER_CATEGORIA
+SELECT C.id, C.Nome, SUM(T.Importo) AS Totale
+FROM Categorie C
+LEFT JOIN Transazioni T ON T.Categoria = C.id
+GROUP BY C.id, C.Nome
+ORDER BY C.Nome;
+
+-- SPESE_MENSILI_VS_BUDGET
+
