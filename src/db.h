@@ -23,4 +23,5 @@ namespace db_u{
     bool creaBudget(sqlite3* db, int m, int y, std::string cat, double imp);
     std::vector<RigaSpesa> getSpesePerCategoria(sqlite3* db);
     RigaSpesaVsBudget getSpeseMensiliVsBudget(sqlite3* db, int m, int y, std::string cat);
+    std::vector<spesa> getSpeseTraDate(sqlite3* db, std::string data1, std::string data2);
 }

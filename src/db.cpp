@@ -427,4 +427,63 @@ namespace db_u {
         finalize(stmt);
         return speseVsBudget;
     }
+
+    std::vector<spesa> getSpeseTraDate(sqlite3* db, std::string data1, std::string data2){
+        //verifichiamo se e quale data è CD e usiamo query diverse
+        bool d1cd = false;
+        bool d2cd = false;
+        std::string query;
+        if(data1 =="CURRENT_DATE" && data2 == "CURRENT_DATE"){
+            query = getQuery("SPESE_TRA_DATE_CD_B");
+            d1cd = d2cd = true;
+        }else if(data1 == "CURRENT_DATE" && data2 != "CURRENT_DATE"){
+            query = getQuery("SPESE_TRA_DATE_CD");
+            d1cd = true;
+            d2cd = false;
+        }else if(data2 == "CURRENT_DATE" && data1 != "CURRENT_DATE"){
+            query = getQuery("SPESE_TRA_DATE_CD");
+            d1cd = false;
+            d2cd = true;
+        }else{
+            query = getQuery("SPESE_TRA_DATE");
+            d1cd = d2cd = false;
+        }
+
+        if (query == "error"){
+            std::cout << "Errore nella lettura della query." << std::endl;
+            return {};
+        }
+
+        sqlite3_stmt* stmt;
+        stmt = prepare(db, query.c_str());
+
+        if(d1cd && d2cd){
+            
+        }else if(d1cd && !d2cd){
+            bind_txt(stmt, 2, data1.c_str());
+        }else if(!d1cd && d2cd){
+            bind_txt(stmt, 2, data2.c_str());
+        }else{
+            bind_txt(stmt, 1, data1.c_str());
+            bind_txt(stmt, 2, data2.c_str());
+        }
+
+        std::vector<spesa> spese;
+
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            double importo = sqlite3_column_double(stmt, 2);
+            std::string data = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            std::string cat = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+            std::string desc = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+            spesa s;
+            s.data = data;
+            s.importo = importo;
+            s.descrizione = desc;
+            s.categoria = cat;
+            spese.push_back(s);
+        }
+
+        finalize(stmt);
+        return spese;
+    }
 }

@@ -188,7 +188,45 @@ namespace report {
     }
 
     void elencoSpesePerData(sqlite3* db) {
-        std::cout << "Elenco completo delle spese ordinate per data" << std::endl;
+        std::cout << "-----------------------------------------------" << std::endl;
+        std::cout << "---------------------Spese---------------------" << std::endl;
+        std::cout << "-----------------------------------------------" << std::endl;
+
+        //voglio far leggere le spese tra due date
+        std::string data1, data2;
+        int y1,m1,d1,y2,m2,d2;
+
+        std::cout << "Inserire la data di inizio del periodo (premere invio per data odierna): " << std::endl;
+        
+        bool res = util::inData(data1, y1, m1, d1);
+        if (!res){
+            std::cout << "Data non valida, ritorno al menu report" << std::endl;
+            return;
+        }
+        std::cout << "Inserire la data di fine del periodo (premere invio per data odierna): " << std::endl;
+        res = util::inData(data2, y2, m2, d2);
+
+        if (!res){
+            std::cout << "Data non valida, ritorno al menu report" << std::endl;
+            return;
+        }
+        /* if (y1 > y2 || (y1 == y2 && m1 > m2) || (y1 == y2 && m1 == m2 && d1 > d2)){
+            std::cout << "Errore: Data di inizio successiva o uguale alla data di fine, ritorno al menu report" << std::endl;
+            return;
+        } */
+
+        std::vector<spesa> spese = db_u::getSpeseTraDate(db, data1, data2);
+        std::cout << "| Data      | Importo  | Categoria       | Descrizione       |" << std::endl;
+        std::cout << "-------------------------------------------------------------" << std::endl;
+
+        for (int i = 0; i < spese.size(); i++){
+            const spesa& spesa = spese[i];
+            std::cout <<  "Data: " << spesa.data << " | Importo: " 
+                << spesa.importo << " | Categoria: " 
+                << spesa.categoria << " | Descrizione: " 
+                << spesa.descrizione << std::endl << std::endl;
+        }
+
     }
 
 }

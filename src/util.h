@@ -18,6 +18,13 @@ struct RigaSpesaVsBudget{
     bool stato;
 };
 
+struct spesa{
+    std::string data;
+    double importo;
+    std::string descrizione;
+    std::string categoria;
+};
+
 
 namespace util{
     constexpr bool VUOTO_OK = true;
