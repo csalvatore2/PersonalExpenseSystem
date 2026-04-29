@@ -154,7 +154,36 @@ namespace report {
             isin = categorie::cercaCategoria(categorie_esistenti, cat);
         }while(!isin);
 
-        db_u::getSpeseMensiliVsBudget(db, m, a, cat);
+        RigaSpesaVsBudget resp = db_u::getSpeseMensiliVsBudget(db, m, a, cat);
+
+        std::cout << "-----------------------------------------------" << std::endl;
+        std::cout << "-----------------Report------------------------" << std::endl;
+        std::cout << "-----------------------------------------------" << std::endl;
+
+        if (resp.id == -1 || resp.mese == -1
+            || resp.anno == -1  || resp.nome == "") {
+            std::cout << "Risposta invalida dal db." << std::endl;
+            std::cout << "Nome Categoria: " << resp.nome << std::endl;
+            std::cout << "Mese:           " << resp.mese << std::endl;
+            std::cout << "Anno:           " << resp.anno << std::endl;
+            std::cout << "Spesa:          " << resp.speso << std::endl;
+            std::cout << "Budget:         " << resp.limite << std::endl;
+        }
+        else{
+            float perc = round(((resp.speso / resp.limite) * 100)*100.0) / 100.0;
+            std::cout << "Nome Categoria: " << resp.nome << std::endl;
+            std::cout << "Mese:           " << resp.mese << std::endl;
+            std::cout << "Anno:           " << resp.anno << std::endl;
+            std::cout << "Spesa:          " << resp.speso << std::endl;
+            std::cout << "Budget:         " << resp.limite << std::endl;
+            std::cout << "Percentuale:    " << perc << "%" << std::endl;
+            if (resp.stato) {
+                std::cout << "ENTRO IL BUDGET" << std::endl;
+            } else {
+                std::cout << "SUPERAMENTO BUDGET" << std::endl;
+            }
+        }
+        std::cout << "-----------------------------------------------" << std::endl << std::endl;
 
     }
 

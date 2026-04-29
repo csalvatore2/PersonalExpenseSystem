@@ -1,5 +1,6 @@
 #include <iostream>
 #include "db.h"
+#include "util.h"
 #include <sqlite3.h>
 #include <fstream>
 #include <sstream>
@@ -42,8 +43,6 @@ namespace db_u {
     void bind_double(sqlite3_stmt* stmt, int index, double value){
         sqlite3_bind_double(stmt, index, value);    
     }        
-
-    
 
     //funzione per prendere la qery dal file.sql
     std::string getQuery(const std::string& tag){
@@ -95,7 +94,6 @@ namespace db_u {
     void finalize(sqlite3_stmt* stmt) {
         sqlite3_finalize(stmt);
     }
-
 
     //FUNZIONI SPECIFICHE
     bool checkTabella(sqlite3* db, const char* nomeTabella) {
@@ -381,5 +379,52 @@ namespace db_u {
 
         finalize(stmt);
         return spese;
+    }
+
+    RigaSpesaVsBudget getSpeseMensiliVsBudget(sqlite3* db, int m, int y, std::string cat){
+        std::string query = getQuery("SPESE_MENSILI_VS_BUDGET");
+
+        if (query == "error"){
+            std::cout << "Errore nella lettura della query." << std::endl;
+            return {};
+        }
+
+        sqlite3_stmt* stmt;
+        stmt = prepare(db, query.c_str());
+
+        bind_txt(stmt, 1, cat.c_str());
+        bind_int(stmt, 2, m);
+        bind_int(stmt, 3, y);
+
+        RigaSpesaVsBudget speseVsBudget;
+
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            int id_cat = -1;
+            id_cat = sqlite3_column_int(stmt, 0);
+            std::string cat = "";
+            cat = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            int mese = -1;
+            mese = sqlite3_column_int(stmt, 2);
+            int yr = -1;
+            yr = sqlite3_column_int(stmt, 3);
+            double spesa = 0;
+            spesa = sqlite3_column_double(stmt, 4);
+            double budget = 0;
+            budget = sqlite3_column_double(stmt, 5);
+            bool s = (spesa < budget);
+            RigaSpesaVsBudget r;
+            r.id = id_cat;
+            r.nome = cat;
+            r.mese = mese;
+            r.anno = yr;
+            r.speso = spesa;
+            r.limite = budget;
+            r.stato = s;
+            speseVsBudget = r;
+        }
+
+
+        finalize(stmt);
+        return speseVsBudget;
     }
 }

@@ -8,6 +8,17 @@ struct RigaSpesa {
     float totale;
 };
 
+struct RigaSpesaVsBudget{
+    int id;
+    std::string nome;
+    int mese;
+    int anno;
+    float speso;
+    float limite;
+    bool stato;
+};
+
+
 namespace util{
     constexpr bool VUOTO_OK = true;
 
