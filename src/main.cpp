@@ -15,7 +15,7 @@ int main() {
     int rc;
 
     // apriamo database
-    rc = sqlite3_open("spese.db", &db);
+    rc = sqlite3_open("sql/spese.db", &db);
     //verifichiamo non restituisca errori
     if (rc) {
         cout << "Errore apertura DB: " << sqlite3_errmsg(db) << endl;

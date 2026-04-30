@@ -47,7 +47,7 @@ namespace db_u {
     //funzione per prendere la qery dal file.sql
     std::string getQuery(const std::string& tag){
         //apre il file
-        std::ifstream file("../sql/database.sql");
+        std::ifstream file("./sql/database.sql");
         //Controlla se file è aperto
         if (!file.is_open()) {
             throw std::runtime_error("Impossibile aprire il file SQL");
