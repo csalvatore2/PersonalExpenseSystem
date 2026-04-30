@@ -460,9 +460,11 @@ namespace db_u {
         if(d1cd && d2cd){
             
         }else if(d1cd && !d2cd){
-            bind_txt(stmt, 2, data1.c_str());
-        }else if(!d1cd && d2cd){
+            bind_txt(stmt, 1, data2.c_str());
             bind_txt(stmt, 2, data2.c_str());
+        }else if(!d1cd && d2cd){
+            bind_txt(stmt, 1, data1.c_str());
+            bind_txt(stmt, 2, data1.c_str());
         }else{
             bind_txt(stmt, 1, data1.c_str());
             bind_txt(stmt, 2, data2.c_str());

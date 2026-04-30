@@ -66,16 +66,32 @@ AND CAST(strftime('%Y', T.Data) AS INTEGER) = ?
 GROUP BY C.id, C.Nome, Mese, Anno;
 
 -- SPESE_TRA_DATE
-SELECT * FROM Transazioni
-WHERE Data BETWEEN ? AND ?
+SELECT T.id AS TID, T.Data, 
+    T.Importo, 
+    T.Descrizione,
+    Categorie.Nome AS Categoria 
+FROM Transazioni T
+LEFT JOIN Categorie ON Categorie.id = T.Categoria
+WHERE T.Data BETWEEN ? AND ?
 ORDER BY Data DESC;
 -- SPESE_TRA_DATE_CD
-SELECT * FROM Transazioni
-WHERE Data BETWEEN CURRENT_DATE AND ?
+SELECT T.id AS T_ID, T.Data, 
+    T.Importo, 
+    T.Descrizione,
+    Categorie.Nome AS Categoria 
+FROM Transazioni T
+LEFT JOIN Categorie ON Categorie.id = T.Categoria
+WHERE T.Data >= MIN(?, CURRENT_DATE)
+AND T.Data <= MAX(?, CURRENT_DATE)
 ORDER BY Data DESC;
 -- SPESE_TRA_DATE_CD_B
-SELECT * FROM Transazioni
-WHERE Data BETWEEN CURRENT_DATE AND CURRENT_DATE
+SELECT T.id AS TID, T.Data, 
+    T.Importo, 
+    T.Descrizione,
+    Categorie.Nome AS Categoria 
+FROM Transazioni T
+LEFT JOIN Categorie ON Categorie.id = T.Categoria
+WHERE T.Data BETWEEN CURRENT_DATE AND CURRENT_DATE
 ORDER BY Data DESC;
 
 -- SVUOTA_TOTALMENTE_IL_DB

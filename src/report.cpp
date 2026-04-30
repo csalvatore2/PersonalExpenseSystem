@@ -210,23 +210,75 @@ namespace report {
             std::cout << "Data non valida, ritorno al menu report" << std::endl;
             return;
         }
-        /* if (y1 > y2 || (y1 == y2 && m1 > m2) || (y1 == y2 && m1 == m2 && d1 > d2)){
-            std::cout << "Errore: Data di inizio successiva o uguale alla data di fine, ritorno al menu report" << std::endl;
-            return;
-        } */
-
-        std::vector<spesa> spese = db_u::getSpeseTraDate(db, data1, data2);
-        std::cout << "| Data      | Importo  | Categoria       | Descrizione       |" << std::endl;
-        std::cout << "-------------------------------------------------------------" << std::endl;
-
-        for (int i = 0; i < spese.size(); i++){
-            const spesa& spesa = spese[i];
-            std::cout <<  "Data: " << spesa.data << " | Importo: " 
-                << spesa.importo << " | Categoria: " 
-                << spesa.categoria << " | Descrizione: " 
-                << spesa.descrizione << std::endl << std::endl;
+        // Controllo che la data di inizio sia precedente a quella di fine
+        if (y1 > y2 || (y1 == y2 && m1 > m2) || (y1 == y2 && m1 == m2 && d1 > d2)){
+            std::swap(data1, data2);
         }
 
+        std::vector<spesa> spese = db_u::getSpeseTraDate(db, data1, data2);
+        std::cout << "---------------------------------------------------------------------------" << std::endl;
+        std::cout << "| Data       | Importo   | Categoria       | Descrizione                   |" << std::endl;
+        std::cout << "---------------------------------------------------------------------------" << std::endl;
+        
+        // Data       | Importo   | Categoria       | Descrizione                   |
+        // 2023-01-07 | 100000.00 | AAAAAAAAAAA     | Descrizione1                  |
+        //      11    |      10   | 16.             | 30.                           |
+        
+        //PER OGNI RIGA DELLE SPESE
+        for (int i = 0; i < spese.size(); i++){
+            const spesa& spesa = spese[i];
+            std::cout << "| ";
+            //STAMPA COLONNA DATA
+            for (int j = 0; j < 11; j++) {
+                if (j < spesa.data.length()) {
+                    std::cout << spesa.data[j];
+                } else {
+                    std::cout << " ";
+                }
+            }
+            //STAMPA COLONNA IMPORTO
+            std::cout << "| ";
+            int dopovirgola = -1;
+            for (int j = 0; j < 10; j++) {
+                std::string importo_str = std::to_string(std::round(spesa.importo * 100.0) / 100.0);
+                if (j < importo_str.length()) {
+                    if (importo_str[j] == '.') {
+                        dopovirgola = 0;
+                    }
+                    if (dopovirgola >= 0) {
+                        dopovirgola++;
+                    }
+                    if (dopovirgola > 3) {
+                        std::cout << " ";
+                    } else {
+                        std::cout << importo_str[j];
+                    }
+                } else {
+                    std::cout << " ";
+                }
+            }
+            //STAMPA COLONNA CATEGORIA
+            std::cout << "| ";
+            for (int j = 0; j < 16; j++) {
+                if (j < spesa.categoria.length()) {
+                    std::cout << spesa.categoria[j];
+                } else {
+                    std::cout << " ";
+                }
+            }
+            //STAMPA COLONNA DESCRIZIONE
+            std::cout << "| ";
+            for (int j = 0; j < 30; j++) {
+                if (j < spesa.descrizione.length()) {
+                    std::cout << spesa.descrizione[j];
+                } else {
+                    std::cout << " ";
+                }
+            }
+            std::cout << "|" << std::endl;
+            
+        }
+        std::cout << "---------------------------------------------------------------------------" << std::endl;
     }
 
 }
