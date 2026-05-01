@@ -326,6 +326,7 @@ namespace db_u {
         std::string query = getQuery("ADD_BUDGET");
 
         if (query == "error"){
+            std::cout << "Errore nella lettura della query." << std::endl;
             return false;
         }
         //trasforma il nome della categoria in id

@@ -70,6 +70,8 @@ namespace budget {
 
         if (resp){
             std::cout <<"Budget inserito correttamente."<< std::endl;
+        }else{
+            std::cout <<"Errore nell'inserimento del budget."<< std::endl;
         }
     }
 }

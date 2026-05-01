@@ -31,6 +31,9 @@ INSERT INTO Categorie (Nome) VALUES (?);
 -- RINOMINA_CATEGORIA
 UPDATE Categorie SET Nome = (?) WHERE Nome = (?);
 
+-- ADD_BUDGET
+INSERT INTO Budget (Mese, Anno, Categoria, Importo_max) VALUES (?,?,?,?);
+
 -- ADD_TRANSAZIONE
 INSERT INTO Transazioni (Importo, Data, Categoria, Descrizione) VALUES (?, ?, ?, ?);
 -- ADD_TRANSAZIONE_CD
