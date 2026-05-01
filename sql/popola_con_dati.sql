@@ -225,7 +225,6 @@ INSERT INTO Budget (Importo_max, Mese, Anno, Categoria) VALUES (150.00, 6, 2023,
 INSERT INTO Budget (Importo_max, Mese, Anno, Categoria) VALUES (180.00, 6, 2023, 4);
 INSERT INTO Budget (Importo_max, Mese, Anno, Categoria) VALUES (90.00,  6, 2023, 5);
 INSERT INTO Budget (Importo_max, Mese, Anno, Categoria) VALUES (14.99,  6, 2023, 6);
-
 INSERT INTO Budget (Importo_max, Mese, Anno, Categoria) VALUES (300.00, 1, 2024, 1);
 INSERT INTO Budget (Importo_max, Mese, Anno, Categoria) VALUES (850.00, 1, 2024, 2);
 INSERT INTO Budget (Importo_max, Mese, Anno, Categoria) VALUES (160.00, 1, 2024, 3);
