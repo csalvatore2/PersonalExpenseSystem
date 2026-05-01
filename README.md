@@ -40,7 +40,7 @@ make
 In alternativa, senza Makefile:
 
 ```bash
-g++ src/main.cpp -o PersonalExpenseSystem -lsqlite3 -std=c++17
+	g++ -std=c++17 src/main.cpp src/categorie.cpp src/transazioni.cpp src/db.cpp src/util.cpp src/budget.cpp src/report.cpp -lsqlite3 -o app
 ```
 
 ---
@@ -48,7 +48,7 @@ g++ src/main.cpp -o PersonalExpenseSystem -lsqlite3 -std=c++17
 ## ▶️ Avvio del programma
 
 ```bash
-./PersonalExpenseSystem
+./app
 ```
 
 Al primo avvio il programma crea automaticamente il database SQLite (`spese.db`) nella directory corrente.
@@ -56,8 +56,18 @@ Al primo avvio il programma crea automaticamente il database SQLite (`spese.db`)
 ### Caricamento dei dati di esempio (opzionale)
 
 ```bash
+make popola
+```
+
+```bash
 sqlite3 expenses.db < sql/popola_con_dati.sql
 ```
+
+Per reset del db:
+```bash
+    make reset_db
+```
+
 
 ---
 
@@ -74,7 +84,7 @@ sqlite3 expenses.db < sql/popola_con_dati.sql
 
 ## 🗄️ Database
 
-Il database è gestito tramite SQLite (file locale `expenses.db`) e contiene tre tabelle:
+Il database è gestito tramite SQLite (file locale `spese.db`) e contiene tre tabelle:
 
 - **Categorie** — elenco delle categorie di spesa
 - **Transazioni** — registro delle spese
