@@ -1,0 +1,19 @@
+# Eseguibile compilato
+app
+
+# Database SQLite (generato automaticamente all'avvio)
+*.db
+*.db-shm
+*.db-wal
+sql/spese.db
+ 
+# VSCode
+.vscode/
+ 
+# macOS
+.DS_Store
+ 
+# File temporanei
+*.tmp
+*.log
+ 
